@@ -80,7 +80,7 @@ export async function upsertHistoricalPrice(
   }
 }
 
-// Batch insert historical prices
+// Batch insert historical prices (updated for new @vercel/postgres version)
 export async function batchInsertHistoricalPrices(
   prices: Array<{
     symbol: string;
@@ -89,19 +89,24 @@ export async function batchInsertHistoricalPrices(
   }>
 ): Promise<void> {
   try {
-    // Use a transaction for batch insert
-    const values = prices
-      .map((p) => `('${p.symbol}', '${p.date}', ${p.adjustedClose})`)
-      .join(",");
+    // Process in batches of 50 to avoid overwhelming the database
+    const batchSize = 50;
 
-    await sql.unsafe(`
-      INSERT INTO historical_prices (symbol, date, adjusted_close)
-      VALUES ${values}
-      ON CONFLICT (symbol, date) 
-      DO UPDATE SET 
-        adjusted_close = EXCLUDED.adjusted_close,
-        created_at = CURRENT_TIMESTAMP
-    `);
+    for (let i = 0; i < prices.length; i += batchSize) {
+      const batch = prices.slice(i, i + batchSize);
+
+      // Use individual upserts for each item in the batch
+      const promises = batch.map((price) =>
+        upsertHistoricalPrice(price.symbol, price.date, price.adjustedClose)
+      );
+
+      await Promise.all(promises);
+
+      // Small delay between batches to prevent overwhelming the database
+      if (i + batchSize < prices.length) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+    }
   } catch (error) {
     console.error("Error batch inserting historical prices:", error);
     throw new Error("Failed to batch insert historical prices");
