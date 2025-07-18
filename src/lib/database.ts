@@ -1,6 +1,12 @@
 import { sql } from "@vercel/postgres";
 import { HistoricalPrice } from "@/types";
 
+// Helper function to safely extract error message
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  return String(error);
+}
+
 // Database schema initialization
 export async function initializeDatabase() {
   try {
@@ -26,7 +32,7 @@ export async function initializeDatabase() {
     return { success: true };
   } catch (error) {
     console.error("Database initialization failed:", error);
-    return { success: false, error: error.message };
+    return { success: false, error: getErrorMessage(error) };
   }
 }
 
