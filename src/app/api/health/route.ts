@@ -9,12 +9,12 @@ export async function GET() {
 
     // Check environment variables
     const envChecks = {
-      hasPostgresUrl: !!process.env.POSTGRES_URL,
+      hasDatabaseUrl: !!process.env.DATABASE_URL,
       hasAlphaVantageKey: !!process.env.ALPHA_VANTAGE_API_KEY,
       nodeEnv: process.env.NODE_ENV,
     };
 
-    const isHealthy = dbHealthy && envChecks.hasPostgresUrl;
+    const isHealthy = dbHealthy && envChecks.hasDatabaseUrl;
 
     return NextResponse.json(
       {

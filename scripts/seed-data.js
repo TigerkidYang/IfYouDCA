@@ -9,8 +9,11 @@
  * Usage: node scripts/seed-data.js
  */
 
-const { sql } = require("@vercel/postgres");
-require("dotenv").config();
+const { neon } = require("@neondatabase/serverless");
+require("dotenv").config({ path: ".env.development.local" });
+
+// Initialize Neon connection
+const sql = neon(process.env.DATABASE_URL);
 
 const SUPPORTED_ASSETS = [
   { symbol: "SPY", name: "S&P 500 ETF" },

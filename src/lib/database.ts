@@ -1,5 +1,20 @@
-import { sql } from "@vercel/postgres";
+import { neon } from "@neondatabase/serverless";
 import { HistoricalPrice } from "@/types";
+
+// Lazy initialize Neon connection only when needed (server-side only)
+function getSql() {
+  if (typeof window !== "undefined") {
+    throw new Error(
+      "Database operations can only be performed on the server side"
+    );
+  }
+
+  if (!process.env.DATABASE_URL) {
+    throw new Error("DATABASE_URL environment variable is not set");
+  }
+
+  return neon(process.env.DATABASE_URL);
+}
 
 // Helper function to safely extract error message
 function getErrorMessage(error: unknown): string {
@@ -10,6 +25,8 @@ function getErrorMessage(error: unknown): string {
 // Database schema initialization
 export async function initializeDatabase() {
   try {
+    const sql = getSql();
+
     // Create historical_prices table if it doesn't exist
     await sql`
       CREATE TABLE IF NOT EXISTS historical_prices (
@@ -43,6 +60,7 @@ export async function getHistoricalPrices(
   endDate: string
 ): Promise<HistoricalPrice[]> {
   try {
+    const sql = getSql();
     const result = await sql`
       SELECT id, symbol, date::text, adjusted_close as "adjustedClose"
       FROM historical_prices
@@ -52,7 +70,7 @@ export async function getHistoricalPrices(
       ORDER BY date ASC
     `;
 
-    return result.rows as HistoricalPrice[];
+    return result as HistoricalPrice[];
   } catch (error) {
     console.error("Error fetching historical prices:", error);
     throw new Error(`Failed to fetch historical prices for ${symbol}`);
@@ -66,6 +84,7 @@ export async function upsertHistoricalPrice(
   adjustedClose: number
 ): Promise<void> {
   try {
+    const sql = getSql();
     await sql`
       INSERT INTO historical_prices (symbol, date, adjusted_close)
       VALUES (${symbol}, ${date}::date, ${adjustedClose})
@@ -80,7 +99,7 @@ export async function upsertHistoricalPrice(
   }
 }
 
-// Batch insert historical prices (updated for new @vercel/postgres version)
+// Batch insert historical prices
 export async function batchInsertHistoricalPrices(
   prices: Array<{
     symbol: string;
@@ -118,13 +137,14 @@ export async function getLatestDateForSymbol(
   symbol: string
 ): Promise<string | null> {
   try {
+    const sql = getSql();
     const result = await sql`
       SELECT MAX(date)::text as latest_date
       FROM historical_prices
       WHERE symbol = ${symbol}
     `;
 
-    return result.rows[0]?.latest_date || null;
+    return result[0]?.latest_date || null;
   } catch (error) {
     console.error("Error getting latest date:", error);
     return null;
@@ -134,6 +154,7 @@ export async function getLatestDateForSymbol(
 // Check database health
 export async function checkDatabaseHealth(): Promise<boolean> {
   try {
+    const sql = getSql();
     await sql`SELECT 1`;
     return true;
   } catch (error) {

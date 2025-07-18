@@ -67,7 +67,7 @@ export default function DCACalculator() {
               id="asset"
               value={input.asset}
               onChange={(e) => handleInputChange("asset", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent text-gray-900 bg-white"
             >
               {SUPPORTED_ASSETS.map((asset) => (
                 <option key={asset.symbol} value={asset.symbol}>
@@ -101,7 +101,7 @@ export default function DCACalculator() {
                     parseFloat(e.target.value) || 0
                   )
                 }
-                className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent"
+                className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent text-gray-900 bg-white"
                 placeholder="0"
               />
             </div>
@@ -131,7 +131,7 @@ export default function DCACalculator() {
                     parseFloat(e.target.value) || 0
                   )
                 }
-                className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent"
+                className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent text-gray-900 bg-white"
                 placeholder="100"
                 required
               />
@@ -153,7 +153,7 @@ export default function DCACalculator() {
               min={DATE_LIMITS.earliestDate}
               max={input.endDate}
               onChange={(e) => handleInputChange("startDate", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent text-gray-900 bg-white"
               required
             />
           </div>
@@ -173,7 +173,7 @@ export default function DCACalculator() {
               min={input.startDate}
               max={DATE_LIMITS.latestDate}
               onChange={(e) => handleInputChange("endDate", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent text-gray-900 bg-white"
               required
             />
           </div>
