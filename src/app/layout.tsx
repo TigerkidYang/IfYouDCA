@@ -80,6 +80,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <Suspense>
+          <GoogleAnalytics />
+        </Suspense>
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
@@ -105,9 +108,6 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <Suspense>
-          <GoogleAnalytics />
-        </Suspense>
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
           {children}
         </div>
