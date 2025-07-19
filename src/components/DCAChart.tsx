@@ -7,28 +7,34 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from "recharts";
+import { Range, getTrackBackground } from "react-range";
+import { useState, useMemo } from "react";
 import { ChartDataPoint } from "@/types";
 import { formatCurrency } from "@/lib/dca-calculator";
 import { CHART_CONFIG } from "@/lib/constants";
+import { aggregateChartData } from "@/lib/chart-utils";
 
 interface DCAChartProps {
   data: ChartDataPoint[];
 }
 
 export default function DCAChart({ data }: DCAChartProps) {
-  // Format data for chart display
-  const chartData = data.map((point) => ({
-    ...point,
-    date: new Date(point.date + "-01").toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-    }),
-    totalValueFormatted: formatCurrency(point.totalValue),
-    totalInvestmentFormatted: formatCurrency(point.totalInvestment),
-  }));
+  const [rangeValues, setRangeValues] = useState([0, data.length - 1]);
+
+  const chartDisplayData = useMemo(() => {
+    const [start, end] = rangeValues;
+    return data.slice(start, end + 1).map((point) => ({
+      ...point,
+      date: new Date(point.date + "-01").toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+      }),
+      totalValueFormatted: formatCurrency(point.totalValue),
+      totalInvestmentFormatted: formatCurrency(point.totalInvestment),
+    }));
+  }, [data, rangeValues]);
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -61,7 +67,7 @@ export default function DCAChart({ data }: DCAChartProps) {
                 {data.totalInvestmentFormatted}
               </span>
             </div>
-            <div className="pt-2 border-t border-gray-100">
+            <div className="pt-2 mt-2 border-t border-gray-200">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-brand-gray-600">
                   Share Price:
@@ -87,32 +93,17 @@ export default function DCAChart({ data }: DCAChartProps) {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-        <h3 className="text-xl font-semibold text-brand-gray-800 mb-2 sm:mb-0">
-          Portfolio Growth Over Time
-        </h3>
-        <div className="flex items-center gap-4 text-sm">
-          <div className="flex items-center gap-2">
-            <div
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: CHART_CONFIG.colors.totalValue }}
-            ></div>
-            <span className="text-brand-gray-600">Portfolio Value</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: CHART_CONFIG.colors.totalInvestment }}
-            ></div>
-            <span className="text-brand-gray-600">Total Invested</span>
-          </div>
-        </div>
-      </div>
+    <div className="bg-white rounded-xl shadow-lg p-4 md:p-6">
+      <h3 className="text-xl font-semibold text-brand-gray-800 mb-4 text-center">
+        Portfolio Growth Over Time
+      </h3>
 
       <div className="h-96 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData} margin={CHART_CONFIG.margins}>
+          <LineChart
+            data={chartDisplayData}
+            margin={{ top: 5, right: 20, left: -10, bottom: 5 }}
+          >
             <CartesianGrid
               strokeDasharray="3 3"
               stroke={CHART_CONFIG.colors.grid}
@@ -120,32 +111,19 @@ export default function DCAChart({ data }: DCAChartProps) {
             <XAxis
               dataKey="date"
               tick={{ fontSize: 12, fill: CHART_CONFIG.colors.text }}
-              tickLine={{ stroke: CHART_CONFIG.colors.grid }}
-              axisLine={{ stroke: CHART_CONFIG.colors.grid }}
             />
             <YAxis
+              tickFormatter={(value) => `$${(value / 1000).toFixed(0)}K`}
               tick={{ fontSize: 12, fill: CHART_CONFIG.colors.text }}
-              tickLine={{ stroke: CHART_CONFIG.colors.grid }}
-              axisLine={{ stroke: CHART_CONFIG.colors.grid }}
-              tickFormatter={(value) => {
-                if (value >= 1000000) {
-                  return `$${(value / 1000000).toFixed(1)}M`;
-                } else if (value >= 1000) {
-                  return `$${(value / 1000).toFixed(0)}K`;
-                } else {
-                  return `$${value}`;
-                }
-              }}
+              domain={["dataMin", "auto"]}
             />
             <Tooltip content={<CustomTooltip />} />
             <Line
               type="monotone"
               dataKey="totalValue"
               stroke={CHART_CONFIG.colors.totalValue}
-              strokeWidth={3}
-              dot={{ r: 4, fill: CHART_CONFIG.colors.totalValue }}
-              activeDot={{ r: 6, fill: CHART_CONFIG.colors.totalValue }}
-              name="Portfolio Value"
+              strokeWidth={2.5}
+              dot={false}
             />
             <Line
               type="monotone"
@@ -153,19 +131,64 @@ export default function DCAChart({ data }: DCAChartProps) {
               stroke={CHART_CONFIG.colors.totalInvestment}
               strokeWidth={2}
               strokeDasharray="5 5"
-              dot={{ r: 3, fill: CHART_CONFIG.colors.totalInvestment }}
-              activeDot={{ r: 5, fill: CHART_CONFIG.colors.totalInvestment }}
-              name="Total Investment"
+              dot={false}
             />
           </LineChart>
         </ResponsiveContainer>
       </div>
 
-      <div className="mt-4 text-sm text-brand-gray-500 text-center">
-        The green line shows your portfolio value growth, while the blue dashed
-        line shows your cumulative investments. The gap between them represents
-        your gains or losses.
-      </div>
+      {data.length > 1 && (
+        <div className="px-4 md:px-8 mt-6">
+          <div className="flex justify-between text-sm text-brand-gray-600 mb-2">
+            <span>
+              {new Date(data[rangeValues[0]].date + "-02").toLocaleDateString(
+                "en-US",
+                { year: "numeric", month: "short" }
+              )}
+            </span>
+            <span>
+              {new Date(data[rangeValues[1]].date + "-02").toLocaleDateString(
+                "en-US",
+                { year: "numeric", month: "short" }
+              )}
+            </span>
+          </div>
+          <Range
+            step={1}
+            min={0}
+            max={data.length - 1}
+            values={rangeValues}
+            onChange={(values) => setRangeValues(values)}
+            renderTrack={({ props, children }) => (
+              <div
+                {...props}
+                className="h-2 w-full rounded-full"
+                style={{
+                  ...props.style,
+                  background: getTrackBackground({
+                    values: rangeValues,
+                    colors: ["#ccc", CHART_CONFIG.colors.totalValue, "#ccc"],
+                    min: 0,
+                    max: data.length - 1,
+                  }),
+                }}
+              >
+                {children}
+              </div>
+            )}
+            renderThumb={({ props }) => (
+              <div
+                {...props}
+                className="h-5 w-5 bg-white rounded-full shadow-md border-2 border-solid"
+                style={{
+                  ...props.style,
+                  borderColor: CHART_CONFIG.colors.totalValue,
+                }}
+              />
+            )}
+          />
+        </div>
+      )}
     </div>
   );
 }

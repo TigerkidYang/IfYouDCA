@@ -83,6 +83,7 @@ export const CHART_CONFIG = {
     left: 40,
     bottom: 60,
   },
+  maxDataPoints: 120, // New property for data aggregation
 };
 
 // SEO configuration
