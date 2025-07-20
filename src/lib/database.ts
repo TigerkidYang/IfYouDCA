@@ -162,3 +162,23 @@ export async function checkDatabaseHealth(): Promise<boolean> {
     return false;
   }
 }
+
+// Get metadata (including earliest date) for all supported assets
+export async function getAssetsMetadata(
+  symbols: string[]
+): Promise<Array<{ symbol: string; earliestDate: string }>> {
+  try {
+    const sql = getSql();
+    const result = await sql`
+      SELECT symbol, MIN(date)::text as "earliestDate"
+      FROM historical_prices
+      WHERE symbol = ANY(${symbols})
+      GROUP BY symbol
+    `;
+
+    return result as Array<{ symbol: string; earliestDate: string }>;
+  } catch (error) {
+    console.error("Error fetching assets metadata:", error);
+    throw new Error("Failed to fetch assets metadata");
+  }
+}

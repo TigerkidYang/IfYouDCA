@@ -1,12 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { DCAInput, DCAResult } from "@/types";
-import {
-  SUPPORTED_ASSETS,
-  DEFAULT_DCA_VALUES,
-  DATE_LIMITS,
-} from "@/lib/constants";
+import { useState, useEffect } from "react";
+import { DCAInput, DCAResult, AssetWithMetadata } from "@/types";
+import { DEFAULT_DCA_VALUES, DATE_LIMITS } from "@/lib/constants";
 import { formatCurrency, formatPercentage } from "@/lib/dca-calculator";
 import DCAChart from "./DCAChart";
 import ResultCards from "./ResultCards";
@@ -16,9 +12,50 @@ export default function DCACalculator() {
   const [result, setResult] = useState<DCAResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [assets, setAssets] = useState<AssetWithMetadata[]>([]);
+  const [minStartDate, setMinStartDate] = useState(DATE_LIMITS.earliestDate);
+
+  // Fetch asset metadata on component mount
+  useEffect(() => {
+    async function fetchAssets() {
+      try {
+        const response = await fetch("/api/assets-metadata");
+        const data = await response.json();
+        if (data.success) {
+          setAssets(data.data);
+          // Set initial min start date for the default asset
+          const defaultAsset = data.data.find(
+            (a: AssetWithMetadata) => a.symbol === DEFAULT_DCA_VALUES.asset
+          );
+          if (defaultAsset) {
+            setMinStartDate(defaultAsset.earliestDate.slice(0, 7));
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch asset metadata:", err);
+      }
+    }
+    fetchAssets();
+  }, []);
 
   const handleInputChange = (field: keyof DCAInput, value: string | number) => {
-    setInput((prev) => ({ ...prev, [field]: value }));
+    const newInput = { ...input, [field]: value };
+
+    // If the asset is changed, update the minimum start date
+    if (field === "asset") {
+      const selectedAsset = assets.find((a) => a.symbol === value);
+      if (selectedAsset) {
+        const newMinDate = selectedAsset.earliestDate.slice(0, 7);
+        setMinStartDate(newMinDate);
+
+        // If current start date is before the new min date, reset it
+        if (newInput.startDate < newMinDate) {
+          newInput.startDate = newMinDate;
+        }
+      }
+    }
+
+    setInput(newInput);
     setError(null);
   };
 
@@ -69,11 +106,15 @@ export default function DCACalculator() {
               onChange={(e) => handleInputChange("asset", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent text-gray-900 bg-white"
             >
-              {SUPPORTED_ASSETS.map((asset) => (
-                <option key={asset.symbol} value={asset.symbol}>
-                  {asset.name} ({asset.symbol})
-                </option>
-              ))}
+              {assets.length > 0 ? (
+                assets.map((asset) => (
+                  <option key={asset.symbol} value={asset.symbol}>
+                    {asset.name} ({asset.symbol})
+                  </option>
+                ))
+              ) : (
+                <option disabled>Loading assets...</option>
+              )}
             </select>
           </div>
 
@@ -150,7 +191,7 @@ export default function DCACalculator() {
               type="month"
               id="startDate"
               value={input.startDate}
-              min={DATE_LIMITS.earliestDate}
+              min={minStartDate}
               max={input.endDate}
               onChange={(e) => handleInputChange("startDate", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent text-gray-900 bg-white"

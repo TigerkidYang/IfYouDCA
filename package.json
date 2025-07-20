@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "add-asset": "ts-node --require dotenv/config scripts/add-asset.ts"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
@@ -20,7 +21,6 @@
     "autoprefixer": "^10.4.16",
     "clsx": "^2.0.0",
     "date-fns": "^3.0.0",
-    "dotenv": "^17.2.0",
     "next": "14.2.30",
     "postcss": "^8.4.32",
     "postgres": "^3.4.3",
@@ -33,7 +33,9 @@
   },
   "devDependencies": {
     "@types/pg": "^8.10.9",
+    "dotenv": "^17.2.0",
     "eslint": "^8.56.0",
-    "eslint-config-next": "14.2.30"
+    "eslint-config-next": "14.2.30",
+    "ts-node": "^10.9.2"
   }
 }

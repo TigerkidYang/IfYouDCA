@@ -37,7 +37,17 @@ export const SUPPORTED_ASSETS: Asset[] = [
     name: "NVIDIA Corporation",
     type: "stock",
   },
-];
+  {
+    symbol: "TSLA",
+    name: "Tesla, Inc.",
+    type: "stock",
+  },
+    {
+    symbol: "BRK.B",
+    name: "Berkshire Hathaway Inc. (Class B)",
+    type: "stock",
+  },
+  ];
 
 // Default DCA calculation values
 export const DEFAULT_DCA_VALUES = {

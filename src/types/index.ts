@@ -7,6 +7,10 @@ export interface Asset {
   type: AssetType;
 }
 
+export interface AssetWithMetadata extends Asset {
+  earliestDate: string;
+}
+
 // DCA calculation input parameters
 export interface DCAInput {
   asset: string;

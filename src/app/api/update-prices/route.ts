@@ -6,6 +6,10 @@ import {
   upsertHistoricalPrice,
   getLatestDateForSymbol,
 } from "@/lib/database";
+import {
+  fetchFullHistoricalData,
+  fetchRecentHistoricalData,
+} from "@/lib/alpha-vantage-api";
 
 // This route should be called by Vercel Cron Jobs
 export async function POST(request: NextRequest) {
@@ -49,25 +53,10 @@ export async function POST(request: NextRequest) {
         const latestDate = await getLatestDateForSymbol(asset.symbol);
 
         // Fetch data from Alpha Vantage
-        const url = `${ALPHA_VANTAGE_CONFIG.baseUrl}?function=${ALPHA_VANTAGE_CONFIG.function}&symbol=${asset.symbol}&apikey=${apiKey}&outputsize=${ALPHA_VANTAGE_CONFIG.outputSize}`;
-
-        const response = await fetch(url);
-        const data = await response.json();
-
-        // Check for API errors
-        if (data["Error Message"]) {
-          throw new Error(`API Error: ${data["Error Message"]}`);
-        }
-
-        if (data["Note"]) {
-          throw new Error(`API Limit: ${data["Note"]}`);
-        }
-
-        // Parse the time series data
-        const timeSeries = data["Monthly Adjusted Time Series"];
-        if (!timeSeries) {
-          throw new Error("No time series data returned");
-        }
+        const timeSeries = await fetchRecentHistoricalData(
+          asset.symbol,
+          apiKey
+        );
 
         let updatedCount = 0;
 
