@@ -10,7 +10,7 @@ import SkeletonLoader from "./SkeletonLoader";
 interface EmbeddedCalculatorResultProps {
   initialScenarioId: string;
   comparisonScenarioId?: string;
-  toggleLabels: [string, string];
+  toggleLabels: readonly [string, string];
 }
 
 async function fetchPrecalculatedResult(id: string): Promise<DCAResult> {
