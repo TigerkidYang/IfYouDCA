@@ -5,12 +5,20 @@ import { formatCurrency, formatPercentage } from "@/lib/dca-calculator";
 import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/solid";
 import ResultCard from "./ResultCard";
 
-export default function ResultCards({ result }: { result: DCAResult }) {
+interface ResultCardsProps {
+  result: DCAResult;
+  isEmbedded?: boolean;
+}
+
+export default function ResultCards({ result, isEmbedded }: ResultCardsProps) {
   const gainIsPositive = result.totalGain >= 0;
   const returnIsPositive = result.annualizedReturn >= 0;
+  const gridClasses = isEmbedded
+    ? "grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4"
+    : "grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6";
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 text-center">
+    <div className={`${gridClasses} text-center`}>
       <ResultCard
         label="Final Value"
         value={formatCurrency(result.finalValue)}
