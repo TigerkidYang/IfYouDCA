@@ -14,9 +14,12 @@
     "precalc-insights": "ts-node scripts/precalculate-insights.ts",
     "dev:lan": "next dev --hostname 192.168.5.46"
   },
+  "overrides": {
+    "unrs-resolver": "^2.0.12"
+  },
   "dependencies": {
     "@headlessui/react": "^2.1.2",
-    "@heroicons/react": "^2.0.18",
+    "@heroicons/react": "^2.1.5",
     "@neondatabase/serverless": "^1.0.1",
     "@prisma/client": "^6.12.0",
     "@types/node": "^20.10.5",
