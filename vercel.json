@@ -6,8 +6,8 @@
   },
   "crons": [
     {
-      "path": "/api/update-prices",
-      "schedule": "0 1 * * *"
+      "path": "/api/cron/backfill-all-assets",
+      "schedule": "0 5 1 * *"
     }
   ],
   "headers": [

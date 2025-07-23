@@ -42,12 +42,12 @@ export const SUPPORTED_ASSETS: Asset[] = [
     name: "Tesla, Inc.",
     type: "stock",
   },
-    {
+  {
     symbol: "BRK.B",
     name: "Berkshire Hathaway Inc. (Class B)",
     type: "stock",
   },
-  ];
+];
 
 // Default DCA calculation values
 export const DEFAULT_DCA_VALUES = {
@@ -60,7 +60,7 @@ export const DEFAULT_DCA_VALUES = {
 
 // Date limits
 export const DATE_LIMITS = {
-  earliestDate: "2000-01", // Earliest supported date
+  earliestDate: "1990-01", // Earliest supported date
   latestDate: new Date().toISOString().slice(0, 7),
 };
 

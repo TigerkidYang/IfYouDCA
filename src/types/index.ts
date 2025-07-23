@@ -11,6 +11,17 @@ export interface AssetWithMetadata extends Asset {
   earliestDate: string;
 }
 
+// Blog post structure for insights
+export interface InsightPost {
+  slug: string;
+  title: string;
+  summary: string;
+  publishDate: string;
+  metaDescription: string;
+  content: string;
+  interactiveScenario?: DCAInput;
+}
+
 // DCA calculation input parameters
 export interface DCAInput {
   asset: string;
@@ -20,11 +31,9 @@ export interface DCAInput {
   endDate: string; // YYYY-MM format
 }
 
-// Historical price data structure
+// Data shape for historical prices used in calculations
 export interface HistoricalPrice {
-  id: number;
-  symbol: string;
-  date: string;
+  date: string; // YYYY-MM-DD format
   adjustedClose: number;
 }
 

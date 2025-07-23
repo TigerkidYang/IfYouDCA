@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { DCAInput, APIResponse, DCAResult } from "@/types";
 import { calculateDCA } from "@/lib/dca-calculator";
-import { initializeDatabase } from "@/lib/database";
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,9 +17,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
-    // Ensure database is initialized
-    await initializeDatabase();
 
     // Perform DCA calculation
     const result: DCAResult = await calculateDCA(input);

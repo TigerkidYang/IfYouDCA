@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { SUPPORTED_ASSETS } from "@/lib/constants";
+import { SUPPORTED_ASSETS, DATE_LIMITS } from "@/lib/constants";
 import { getAssetsMetadata } from "@/lib/database";
 import { Asset, AssetWithMetadata } from "@/types";
 
@@ -22,7 +22,8 @@ export async function GET() {
     // 3. Combine base info with metadata
     const assetsWithMetadata: AssetWithMetadata[] = baseAssets.map((asset) => ({
       ...asset,
-      earliestDate: metadataMap.get(asset.symbol) || "2000-01-01", // Default if not found
+      earliestDate:
+        metadataMap.get(asset.symbol) || DATE_LIMITS.earliestDate + "-01", // Default if not found
     }));
 
     return NextResponse.json(

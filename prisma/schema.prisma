@@ -1,0 +1,34 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Asset {
+  symbol        String           @id @unique
+  name          String
+  historicalData HistoricalData[]
+}
+
+model HistoricalData {
+  id          Int      @id @default(autoincrement())
+  assetSymbol String
+  date        DateTime
+  price       Float
+  asset       Asset    @relation(fields: [assetSymbol], references: [symbol])
+
+  @@unique([assetSymbol, date])
+}
+
+model PrecalculatedResult {
+  id        String   @id @unique
+  result    Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+} 
