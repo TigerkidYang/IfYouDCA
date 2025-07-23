@@ -15,7 +15,7 @@
     "dev:lan": "next dev --hostname 192.168.5.46"
   },
   "overrides": {
-    "unrs-resolver": "^2.0.12"
+    "unrs-resolver": "1.11.1"
   },
   "dependencies": {
     "@headlessui/react": "^2.1.2",
