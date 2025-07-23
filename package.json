@@ -14,9 +14,6 @@
     "precalc-insights": "ts-node scripts/precalculate-insights.ts",
     "dev:lan": "next dev --hostname 192.168.5.46"
   },
-  "overrides": {
-    "napi-postinstall": "0.2.0"
-  },
   "dependencies": {
     "@headlessui/react": "^2.1.2",
     "@heroicons/react": "^2.1.5",

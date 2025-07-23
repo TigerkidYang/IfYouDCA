@@ -1,33 +1,44 @@
 import twelvedata from "twelvedata";
-import dotenv from "dotenv";
 
-dotenv.config({ path: "./.env.development.local" });
-dotenv.config({ path: "./.env.local" });
-dotenv.config({ path: "./.env.development" });
-dotenv.config({ path: "./.env" });
+// Use a singleton pattern to ensure the client is initialized only once.
+let client: ReturnType<typeof twelvedata> | null = null;
 
-const apiKey = process.env.TWELVEDATA_API_KEY;
+function getTwelveDataClient() {
+  // If the client is already initialized, return it.
+  if (client) {
+    return client;
+  }
 
-if (!apiKey) {
-  throw new Error(
-    "TWELVEDATA_API_KEY is not set in the environment variables."
-  );
+  // Read the API key from environment variables.
+  // This will now happen at runtime when the function is first called.
+  const apiKey = process.env.TWELVEDATA_API_KEY;
+
+  if (!apiKey) {
+    throw new Error(
+      "TWELVEDATA_API_KEY is not set in the environment variables."
+    );
+  }
+
+  const config = {
+    key: apiKey,
+  };
+
+  // Initialize the client and store it for future use.
+  client = twelvedata(config);
+  return client;
 }
-
-const config = {
-  key: apiKey,
-};
-
-const client = twelvedata(config);
 
 export async function getMonthlyHistory(
   symbol: string
 ): Promise<{ date: string; price: number }[]> {
+  // Get the initialized client. This will trigger initialization on the first call.
+  const tdClient = getTwelveDataClient();
+
   console.log(
     `Fetching monthly historical data for ${symbol} from Twelve Data...`
   );
   try {
-    const results = await client.timeSeries({
+    const results = await tdClient.timeSeries({
       symbol,
       interval: "1month",
       outputsize: 5000,
