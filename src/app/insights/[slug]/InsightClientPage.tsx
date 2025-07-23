@@ -27,7 +27,7 @@ export default function InsightClientPage({ post }: InsightClientPageProps) {
         return {
           initialScenarioId: "spy-20y-from-2005",
           comparisonScenarioId: "qqq-20y-from-2005",
-          toggleLabels: ["S&P 500 (SPY)", "NASDAQ 100 (QQQ)"],
+          toggleLabels: ["S&P 500 (SPY)", "NASDAQ 100 (QQQ)"] as const,
         };
       case "power-of-starting-early":
         return {
@@ -36,13 +36,13 @@ export default function InsightClientPage({ post }: InsightClientPageProps) {
           toggleLabels: [
             "Start in 1994 (30 years)",
             "Start in 2004 (20 years)",
-          ],
+          ] as const,
         };
       case "dca-through-market-crashes":
         return {
           initialScenarioId: "spy-crashes-from-2007",
           comparisonScenarioId: "nvda-crashes-from-2007",
-          toggleLabels: ["S&P 500 (SPY)", "NVIDIA (NVDA)"],
+          toggleLabels: ["S&P 500 (SPY)", "NVIDIA (NVDA)"] as const,
         };
       default:
         return null;
