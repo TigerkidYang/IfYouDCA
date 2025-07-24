@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Navigation from "@/components/Navigation";
 import Link from "next/link";
+import Footer from "@/components/Footer";
 import {
   CheckCircleIcon,
   ShieldCheckIcon,
@@ -107,8 +108,8 @@ export default function AboutPage() {
                   Reliable Sources
                 </h3>
                 <p className="text-brand-gray-600">
-                  We source our data from Alpha Vantage, a trusted financial
-                  data provider used by thousands of applications worldwide.
+                  We source our data from Twelve Data, a trusted financial data
+                  provider used by thousands of applications worldwide.
                 </p>
               </div>
 
@@ -147,27 +148,25 @@ export default function AboutPage() {
 
               <ol className="space-y-3 text-brand-gray-600">
                 <li>
-                  <strong>1. Data Retrieval:</strong> We fetch historical
-                  adjusted closing prices for your selected asset and time
-                  period.
+                  <strong>Data Retrieval:</strong> We fetch historical adjusted
+                  closing prices for your selected asset and time period.
                 </li>
                 <li>
-                  <strong>2. Monthly Simulation:</strong> For each month in your
+                  <strong>Monthly Simulation:</strong> For each month in your
                   investment period, we calculate how many shares your monthly
                   contribution would have purchased at that month's price.
                 </li>
                 <li>
-                  <strong>3. Accumulation:</strong> We track your total shares
+                  <strong>Accumulation:</strong> We track your total shares
                   owned and total amount invested over time.
                 </li>
                 <li>
-                  <strong>4. Final Calculation:</strong> Your final portfolio
-                  value is your total shares multiplied by the most recent
-                  price.
+                  <strong>Final Calculation:</strong> Your final portfolio value
+                  is your total shares multiplied by the most recent price.
                 </li>
                 <li>
-                  <strong>5. Performance Metrics:</strong> We calculate your
-                  total return, annualized return (CAGR), and provide detailed
+                  <strong>Performance Metrics:</strong> We calculate your total
+                  return, annualized return (CAGR), and provide detailed
                   visualization of your wealth growth.
                 </li>
               </ol>
@@ -177,25 +176,27 @@ export default function AboutPage() {
               </h3>
 
               <p className="text-brand-gray-600 mb-4">
-                Our historical data currently covers:
+                Our historical data aims to be as comprehensive as possible:
               </p>
 
               <ul className="space-y-2 text-brand-gray-600">
                 <li>
-                  • <strong>Time Range:</strong> 2000 to present (20+ years of
-                  data)
+                  <strong>Time Range:</strong> We use the full available
+                  historical data for each asset, which for some indices goes
+                  back several decades.
                 </li>
                 <li>
-                  • <strong>Update Frequency:</strong> Monthly data points for
-                  consistency with DCA strategies
+                  <strong>Update Frequency:</strong> Monthly data points for
+                  consistency with DCA strategies.
                 </li>
                 <li>
-                  • <strong>Assets Covered:</strong> Major index ETFs (SPY, QQQ)
-                  and large-cap stocks (AAPL, MSFT, GOOGL, AMZN, NVDA)
+                  <strong>Assets Covered:</strong> Major index ETFs (SPY, QQQ)
+                  and large-cap stocks (AAPL, MSFT, GOOGL, AMZN, NVDA).
                 </li>
                 <li>
-                  • <strong>Data Points:</strong> Adjusted closing prices
-                  accounting for all corporate actions
+                  <strong>Data Points:</strong> Adjusted closing prices that
+                  account for all corporate actions like dividends and stock
+                  splits.
                 </li>
               </ul>
             </div>
@@ -288,66 +289,7 @@ export default function AboutPage() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-brand-gray-800 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="md:col-span-2">
-              <h3 className="text-2xl font-bold mb-4">If You DCA</h3>
-              <p className="text-gray-300 mb-4">
-                See your growth, backed by history. The simplest way to
-                understand the power of Dollar-Cost Averaging.
-              </p>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-4">Quick Links</h4>
-              <ul className="space-y-2 text-gray-300">
-                <li>
-                  <Link href="/" className="hover:text-white transition-colors">
-                    Home
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/insights"
-                    className="hover:text-white transition-colors"
-                  >
-                    Insights
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/faq"
-                    className="hover:text-white transition-colors"
-                  >
-                    FAQ
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/contact"
-                    className="hover:text-white transition-colors"
-                  >
-                    Contact
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-4">Disclaimer</h4>
-              <p className="text-gray-300 text-sm">
-                This tool is for educational purposes only. Past performance
-                does not guarantee future results.
-              </p>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-300">
-            <p>&copy; 2024 If You DCA. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }
